@@ -111,6 +111,20 @@ class UserController {
 
     return res.status(200).json(user);
   }
+
+  async index(req, res) {
+    const users = await knex("users");
+
+    res.status(200).json(users);
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+
+    await knex("users").where({ id }).delete();
+
+    res.status(204).json();
+  }
 }
 
 module.exports = UserController;
