@@ -4,7 +4,10 @@ const AppError = require("../utils/AppError");
 class UserController {
   async create(req, res) {
     const { name, email, password, avatar } = req.body;
+    const validEmail =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
+    // validations
     if (!name || !email || !password) {
       const requireField = !name
         ? "Name"
@@ -14,6 +17,10 @@ class UserController {
         ? "Password"
         : "";
       throw new AppError(`${requireField} is a required field`);
+    }
+
+    if (!validEmail.test(email)) {
+      throw new AppError("Please enter a valid email");
     }
 
     await knex("users").insert({
