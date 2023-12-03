@@ -97,7 +97,19 @@ class UserController {
         updated_at,
       })
       .where("id", id);
-    res.status(200).json();
+    res.status(204).json();
+  }
+
+  async show(req, res) {
+    const { id } = req.params;
+
+    const [user] = await knex("users").where("id", id);
+
+    if (!user) {
+      throw new AppError("User doesn't exist!");
+    }
+
+    return res.status(200).json(user);
   }
 }
 
