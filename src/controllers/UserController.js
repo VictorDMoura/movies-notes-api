@@ -1,3 +1,4 @@
+const { hash, compare } = require("bcryptjs");
 const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
 
@@ -23,10 +24,18 @@ class UserController {
       throw new AppError("Please enter a valid email");
     }
 
+    const checkUserExists = await knex("users").where("email", email);
+    if (checkUserExists) {
+      throw new AppError("User already exists!");
+    }
+
+    // hash password
+    const hashedPassword = await hash(password, 8);
+
     await knex("users").insert({
       name,
       email,
-      password,
+      password: hashedPassword,
       avatar,
     });
 
