@@ -40,6 +40,36 @@ class MoviesNotesController {
 
     res.status(201).json();
   }
+
+  async show(req, res) {
+    const { id } = req.params;
+    const note = await knex("movies_notes").where({ id }).first();
+
+    if (!note) {
+      throw new AppError("No note find");
+    }
+
+    const tags = await knex("movies_tags")
+      .where({ note_id: id })
+      .orderBy("name");
+    res.status(200).json({
+      ...note,
+      tags,
+    });
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+    const note = await knex("movies_notes").where({ id }).first();
+
+    if (!note) {
+      throw new AppError("No note find");
+    }
+
+    await knex("movies_notes").where({ id }).delete();
+
+    res.status(200).json();
+  }
 }
 
 module.exports = MoviesNotesController;
